@@ -11,16 +11,16 @@ export const INTRO_TRANSITION = {
 
 export const EXPERIENCE_TRANSITION = {
     nameStart: 0,
-    nameEnd: 0.2,
-    educationStart: 0.25,
-    educationEnd: 0.5,
+    nameEnd: 0.35,
+    educationStart: 0.45,
+    educationEnd: 0.75,
 } as const;
 
 export const MOBILE_EXPERIENCE_TRANSITION = {
     ...EXPERIENCE_TRANSITION,
-    nameEnd: 0.18,
-    educationStart: 0.22,
-    educationEnd: 0.45,
+    nameEnd: 0.3,
+    educationStart: 0.4,
+    educationEnd: 0.7,
 } as const;
 
 export const MOBILE_PROJECTS_MORPH = {
