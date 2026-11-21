@@ -72,6 +72,10 @@ export const createSectionTransitions = ({
     let sectionSnapTween: gsap.core.Tween | undefined;
     let sectionSnapSettlingCheck: gsap.core.Tween | undefined;
     let useFastNavigationConstellationFadeOut = false;
+    // These track the real on-screen position of the content rows so the 3D heading
+    // changes together with the visible content instead of arbitrary section progress.
+    let experienceHeadingTrigger: ScrollTrigger | undefined;
+    let educationHeadingTrigger: ScrollTrigger | undefined;
 
     const setProjectPanelBoundaryActive = (active: boolean, immediate = false): void => {
         world.setProjectPanelBoundaryActive(active);
@@ -394,6 +398,20 @@ export const createSectionTransitions = ({
             (1 - smoothstep(rangeProgress(progress, 0.74, 0.86)));
         world.setShootingStarsAppearance('experience', shootingStarsVisibility);
 
+        const nameToExperience = experienceHeadingTrigger?.progress;
+        const experienceToEducation = educationHeadingTrigger?.progress;
+
+        if (experienceToEducation !== undefined && experienceToEducation > 0) {
+            world.morphToShape('experience', 'education', experienceToEducation);
+            return;
+        }
+
+        if (nameToExperience !== undefined) {
+            world.morphToShape('name', 'experience', nameToExperience);
+            return;
+        }
+
+        // Fallback for when the content markers are not present in the DOM.
         if (progress < experienceTransition.educationStart) {
             world.morphToShape(
                 'name',
@@ -647,6 +665,28 @@ export const createSectionTransitions = ({
     };
 
     const initScrollTriggers = (): void => {
+        const firstExperienceRow = document.querySelector<HTMLElement>('.experience__row');
+        if (firstExperienceRow) {
+            experienceHeadingTrigger = ScrollTrigger.create({
+                id: 'experience-heading',
+                trigger: firstExperienceRow,
+                start: 'top bottom',
+                end: 'top center',
+            });
+        }
+
+        const firstEducationRow = document.querySelector<HTMLElement>(
+            '.experience__row--education',
+        );
+        if (firstEducationRow) {
+            educationHeadingTrigger = ScrollTrigger.create({
+                id: 'education-heading',
+                trigger: firstEducationRow,
+                start: 'top bottom',
+                end: 'top center',
+            });
+        }
+
         const projectsFullyInteractiveProgress = Math.max(
             PROJECTS_TRANSITION.constellationRevealEnd,
             PROJECTS_TRANSITION.panelBoundaryStart,
