@@ -5,69 +5,23 @@ import type {
     ContactSubmissionService,
 } from './contactSubmissionService';
 
-const DEFAULT_CONTACT_ENDPOINT = '/api/contact';
-
-const getRetryAfterSeconds = (response: Response): number | undefined => {
-    const retryAfter = response.headers.get('Retry-After');
-
-    if (!retryAfter) {
-        return undefined;
-    }
-
-    const seconds = Number(retryAfter);
-    if (Number.isFinite(seconds) && seconds >= 0) {
-        return Math.ceil(seconds);
-    }
-
-    const retryDate = Date.parse(retryAfter);
-    if (Number.isNaN(retryDate)) {
-        return undefined;
-    }
-
-    return Math.max(0, Math.ceil((retryDate - Date.now()) / 1_000));
-};
-
-const mapResponse = (response: Response): ContactSubmissionResult => {
-    if (response.ok) {
-        return { kind: 'success' };
-    }
-
-    if (response.status === 400 || response.status === 422) {
-        return { kind: 'validation-failure' };
-    }
-
-    if (response.status === 429) {
-        const retryAfterSeconds = getRetryAfterSeconds(response);
-
-        return {
-            kind: 'rate-limited',
-            ...(retryAfterSeconds !== undefined && { retryAfterSeconds }),
-        };
-    }
-
-    return { kind: 'server-failure' };
-};
-
 export const createHttpContactSubmissionService = (
-    endpoint = DEFAULT_CONTACT_ENDPOINT,
+    _endpoint?: string,
 ): ContactSubmissionService => ({
     async submit(
         message: ContactMessage,
-        protection: ContactSubmissionProtection,
+        _protection: ContactSubmissionProtection,
     ): Promise<ContactSubmissionResult> {
-        try {
-            const response = await fetch(endpoint, {
-                method: 'POST',
-                headers: {
-                    Accept: 'application/json',
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ ...message, ...protection }),
-            });
+        const subject = encodeURIComponent(`Portfolio inquiry from ${message.name}`);
+        const body = encodeURIComponent(
+            `${message.message}\n\nReply to: ${message.email}`,
+        );
+        const mailtoUrl = `mailto:shreyanshrajput018@gmail.com?subject=${subject}&body=${body}`;
 
-            return mapResponse(response);
-        } catch {
-            return { kind: 'network-failure' };
+        if (typeof window !== 'undefined') {
+            window.location.href = mailtoUrl;
         }
+
+        return { kind: 'success' };
     },
 });

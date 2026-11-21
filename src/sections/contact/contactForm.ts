@@ -617,8 +617,12 @@ export const initContactForm = (): void => {
         setFormStatus('submitting');
 
         try {
-            const turnstileToken = await turnstile.getTokenForSubmission();
-            if (!turnstileToken) {
+            const hasTurnstileSiteKey = Boolean(import.meta.env.VITE_TURNSTILE_SITE_KEY?.trim());
+            const turnstileToken = hasTurnstileSiteKey
+                ? await turnstile.getTokenForSubmission()
+                : '';
+
+            if (hasTurnstileSiteKey && !turnstileToken) {
                 turnstile.reset();
                 setFormStatus('server-failure');
                 return;
