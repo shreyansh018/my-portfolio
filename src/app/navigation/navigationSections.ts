@@ -26,13 +26,6 @@ export const sectionLandings: Record<SectionId, SectionLanding> = {
             mobile: '17%+=210 top',
         },
     },
-    education: {
-        type: 'position',
-        positions: {
-            default: '17% top',
-            mobile: '17%+=210 top',
-        },
-    },
     projects: {
         type: 'position',
         positions: {

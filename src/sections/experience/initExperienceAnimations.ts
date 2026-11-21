@@ -8,10 +8,7 @@ export const initExperienceAnimations = (config: ResponsiveConfig): void => {
         return;
     }
 
-    const rows = gsap.utils
-        .toArray<HTMLElement>('.experience__row')
-        .filter((row) => !row.closest('#education'))
-        .map((row) => ({
+    const rows = gsap.utils.toArray<HTMLElement>('.experience__row').map((row) => ({
         row,
         splitElements: gsap.utils.toArray<HTMLElement>('.experience__desc', row),
         headerTargets: gsap.utils.toArray<HTMLElement>(
