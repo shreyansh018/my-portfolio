@@ -3,8 +3,8 @@
 .experience {
     display: flex;
     flex-direction: column;
-    gap: 3.25rem;
-    padding: 6rem 0;
+    gap: 2rem;
+    padding: 3rem 0;
 
     &__row {
         padding: 0 var(--experience-row-inline-padding, clamp(10px, calc(18vw + 10px), 23vw));
