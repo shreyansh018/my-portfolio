@@ -1,4 +1,4 @@
-<h1 align="center">Kamil Nowak — Interactive 3D Portfolio</h1>
+<h1 align="center">Interactive 3D Portfolio</h1>
 
 <p align="center">
   A cinematic portfolio combining reliable engineering with motion, visual depth and real-time graphics.
